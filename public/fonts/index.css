@@ -1,0 +1,51 @@
+@font-face {
+  font-family: 'VT323';
+  src: url('/fonts/VT323-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('/fonts/PressStart2P-Regular.ttf') format('truetype');
+}
+
+/* Ajustes finos de espaçamento e tamanho */
+@layer utilities {
+  /* Tamanhos de fonte específicos do Elifoot */
+  .text-elifoot-title {
+    font-size: 3rem;
+    line-height: 1;
+  }
+  
+  .text-elifoot-subtitle {
+    font-size: 1.5rem;
+  }
+  
+  .text-elifoot-body {
+    font-size: 1rem;
+  }
+  
+  .text-elifoot-small {
+    font-size: 0.875rem;
+  }
+  
+  /* Espaçamentos padrão do Elifoot */
+  .elifoot-spacing {
+    padding: 1rem;
+  }
+  
+  .elifoot-spacing-sm {
+    padding: 0.5rem;
+  }
+  
+  .elifoot-spacing-lg {
+    padding: 2rem;
+  }
+  
+  /* Container centralizado */
+  .elifoot-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+}
+
