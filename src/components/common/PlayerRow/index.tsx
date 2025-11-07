@@ -5,6 +5,7 @@ interface PlayerRowProps {
   playerName: string;
   teamName: string;
   onPlayerNameChange: (name: string) => void;
+  isPlayerSelected?: boolean
 }
 
 const PlayerRow: React.FC<PlayerRowProps> = ({
@@ -12,12 +13,14 @@ const PlayerRow: React.FC<PlayerRowProps> = ({
   playerName,
   teamName,
   onPlayerNameChange,
+  isPlayerSelected
 }) => {
   return (
     <div className="player-row">
       <label className="player-label">
         Jogador {playerNumber}
       </label>
+      <span>{isPlayerSelected ? 'o' : '-'}</span>
       <input
         type="text"
         value={playerName}

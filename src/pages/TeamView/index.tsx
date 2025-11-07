@@ -2,13 +2,18 @@ import React, { useState } from 'react';
 import { bragantinoplayers } from '../../data/players';
 import type { Player } from '../../data/players';
 
-const TeamView: React.FC = () => {
+interface TeamViewProps {
+  onPlayMatch: () => void;
+}
+
+const TeamView: React.FC<TeamViewProps> = ({ onPlayMatch }) => {
   const [selectedPlayer, setSelectedPlayer] = useState<Player>(bragantinoplayers[0]);
   const [activeMenu, setActiveMenu] = useState<string>('jogo');
   const [showRenewContract, setShowRenewContract] = useState(false);
   const [newSalary, setNewSalary] = useState(1000);
   const [showFormationMenu, setShowFormationMenu] = useState(false);
-  const [selectedFormation, setSelectedFormation] = useState('3-3-4');
+  const [selectedPlayerIds, setSelectedPlayerIds] = useState<number[]>([]);
+  const [isFormationSelected, setIsFormationSelected] = useState(false);
   
   // Dados mock
   const teamName = 'BRAGANTINO';
@@ -39,6 +44,28 @@ const TeamView: React.FC = () => {
     jurosEmprestimo: 0
   };
 
+  const togglePlayerSelection = (playerId: number) => {
+    setSelectedPlayerIds(prevIds => {
+      if (prevIds.includes(playerId)) {
+        return prevIds.filter(id => id !== playerId);
+      } else {
+        return [...prevIds, playerId];
+      }
+    });
+  };
+
+  const selectBestEleven = () => {
+    const sortedPlayers = [...bragantinoplayers].sort((a, b) => b.skill - a.skill);
+    const bestElevenIds = sortedPlayers.slice(0, 11).map(p => p.id);
+    setSelectedPlayerIds(bestElevenIds);
+  };
+
+  const handleFormationSelection = () => {
+    setShowFormationMenu(false);
+    setIsFormationSelected(true);
+    selectBestEleven();
+  }
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#000', display: 'flex', flexDirection: 'column' }}>
       {/* Menu Superior */}
@@ -61,10 +88,7 @@ const TeamView: React.FC = () => {
         <div className="formation-dropdown">
           <div
             className="formation-item"
-            onClick={() => {
-              setSelectedFormation('3-3-4');
-              setShowFormationMenu(false);
-            }}
+            onClick={handleFormationSelection}
           >
             3-3-4 <span className="shortcut">F2</span>
           </div>
@@ -73,64 +97,43 @@ const TeamView: React.FC = () => {
           </div>
           <div
             className="formation-item"
-            onClick={() => {
-              setSelectedFormation('4-3-3');
-              setShowFormationMenu(false);
-            }}
+            onClick={handleFormationSelection}
           >
             4-3-3 <span className="shortcut">F4</span>
           </div>
           <div
             className="formation-item"
-            onClick={() => {
-              setSelectedFormation('4-4-2');
-              setShowFormationMenu(false);
-            }}
+            onClick={handleFormationSelection}
           >
             4-4-2 <span className="shortcut">F5</span>
           </div>
           <div
             className="formation-item"
-            onClick={() => {
-              setSelectedFormation('4-5-1');
-              setShowFormationMenu(false);
-            }}
+            onClick={handleFormationSelection}
           >
             4-5-1 <span className="shortcut">F6</span>
           </div>
           <div
             className="formation-item"
-            onClick={() => {
-              setSelectedFormation('5-2-3');
-              setShowFormationMenu(false);
-            }}
+            onClick={handleFormationSelection}
           >
             5-2-3 <span className="shortcut">F7</span>
           </div>
           <div
             className="formation-item"
-            onClick={() => {
-              setSelectedFormation('5-3-2');
-              setShowFormationMenu(false);
-            }}
+            onClick={handleFormationSelection}
           >
             5-3-2 <span className="shortcut">F8</span>
           </div>
           <div
             className="formation-item"
-            onClick={() => {
-              setSelectedFormation('5-4-1');
-              setShowFormationMenu(false);
-            }}
+            onClick={handleFormationSelection}
           >
             5-4-1 <span className="shortcut">F9</span>
           </div>
           <div
             className="formation-item"
-            onClick={() => {
-              setSelectedFormation('5-5-0');
-              setShowFormationMenu(false);
-            }}
+            onClick={handleFormationSelection}
           >
             5-5-0 <span className="shortcut">F10</span>
           </div>
@@ -143,10 +146,7 @@ const TeamView: React.FC = () => {
           <div className="formation-separator"></div>
           <div
             className="formation-item"
-            onClick={() => {
-              setSelectedFormation('3-4-3');
-              setShowFormationMenu(false);
-            }}
+            onClick={handleFormationSelection}
           >
             3-4-3
           </div>
@@ -194,10 +194,20 @@ const TeamView: React.FC = () => {
                 <div
                   key={player.id}
                   className={`team-view-squad-row ${selectedPlayer.id === player.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedPlayer(player)}
+                  onClick={() => {
+                    setSelectedPlayer(player);
+                    togglePlayerSelection(player.id);
+                  }}
                 >
                   <div className="team-view-squad-col-pos">{player.position}</div>
-                  <div className="team-view-squad-col-name">{player.name}</div>
+                  <div className="team-view-squad-col-name">
+                    {isFormationSelected && (
+                      <span style={{ marginRight: '5px' }}>
+                        {selectedPlayerIds.includes(player.id) ? '•' : '-'}
+                      </span>
+                    )}
+                    {player.name}
+                  </div>
                   <div className="team-view-squad-col-skill">{player.skill}</div>
                   <div className="team-view-squad-col-salary">${player.value.toLocaleString()}</div>
                 </div>
@@ -443,7 +453,11 @@ const TeamView: React.FC = () => {
             {/* Botão Jogar - apenas no menu Selecção */}
             {activeMenu === 'selecao' && (
               <div className="team-view-play-button-wrapper">
-                <button className="team-view-play-button" disabled>
+                <button
+                  className="team-view-play-button"
+                  disabled={selectedPlayerIds.length !== 11}
+                  onClick={onPlayMatch}
+                >
                   <span className="team-view-play-icon">✓</span>
                   <span>Jogar</span>
                 </button>

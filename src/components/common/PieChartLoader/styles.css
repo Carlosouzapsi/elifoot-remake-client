@@ -1,0 +1,10 @@
+.pie-chart-loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pie-chart-loader {
+  border-radius: 50%;
+  border: 2px solid #000080;
+}

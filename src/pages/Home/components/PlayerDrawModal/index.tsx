@@ -88,6 +88,18 @@ const PlayerDrawModal: React.FC<PlayerDrawModalProps> = ({
     
     // Retornar apenas jogadores com equipes sorteadas
     onComplete(playersWithTeams);
+
+    // Salvar dados no localStorage
+    try {
+      const gameState = {
+        players: playersWithTeams,
+        // Adicionar outros dados do estado do jogo aqui, se necessário
+      };
+      localStorage.setItem('elifootSaveData', JSON.stringify(gameState));
+    } catch (error) {
+      console.error("Erro ao salvar o estado do jogo:", error);
+      alert("Não foi possível salvar o jogo. O armazenamento local pode estar cheio ou desativado.");
+    }
   };
 
   const handleCancel = () => {
